@@ -1,0 +1,32 @@
+{
+  "name": "generate-nginx-config-for-thingies",
+  "version": "0.1.0",
+  "description": "Small cli which generates the appropriate nginx configuration files which will then later reside in /etc/nginx/sites-enabled directory.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nginx",
+    "CLI",
+    "thingy",
+    "machine",
+    "config",
+    "configuration"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JhonnyJason/generate-nginx-config-for-thingies.git"
+  },
+  "author": "Lenard Frommelt",
+  "license": "Unlicense",
+  "bugs": {
+    "url": "https://github.com/JhonnyJason/generate-nginx-config-for-thingies/issues"
+  },
+  "homepage": "https://github.com/JhonnyJason/generate-nginx-config-for-thingies-output#readme",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "fs-extra": "^8.1.0",
+    "meow": "^5.0.0"
+  }
+}
