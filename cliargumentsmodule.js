@@ -75,13 +75,13 @@
       throw "Usage error: obligatory option machineConfig was not provided!";
     }
     if (!extract.outputDirectory) {
-      throw "Usage error: obligatory option keysDirectory was not provided!";
+      throw "Usage error: obligatory option outputDirectory was not provided!";
     }
     if (!(typeof extract.machineConfig === "string")) {
       throw "Usage error: option machineConfig was provided in an unexpected way!";
     }
     if (!(typeof extract.outputDirectory === "string")) {
-      throw "Usage error: option keysDirectory was provided in an unexpected way!";
+      throw "Usage error: option outputDirectory was provided in an unexpected way!";
     }
   };
 
