@@ -28,8 +28,8 @@
   },
   "homepage": "https://github.com/JhonnyJason/generate-nginx-config-for-thingies-output#readme",
   "dependencies": {
-    "chalk": "^2.4.2",
+    "chalk": "^3.0.0",
     "fs-extra": "^8.1.0",
-    "meow": "^5.0.0"
+    "meow": "^6.0.0"
   }
 }

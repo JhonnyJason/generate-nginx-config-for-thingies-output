@@ -4,9 +4,9 @@
 The toolset for the machine thingy requires such a tool.
 
 # What?
-generate-nginx-config-for-thingies - which generates the appropriate nginx configuration files which will then later reside in /etc/nginx/sites-enabled directory. 
+generate-nginx-config-for-thingies - cli taking a config file from a machine-thingy then generating the appropriate nginx server configuration files for each thingy.
 
-Made for the machine thingy toolset to have the appropriate nginx configuration files available.  
+Considers a potential port to the outside, DNS names, proxy_pass to service-thingies either as unix socket or tcp socket.
 
 # How?
 Requirements
@@ -27,9 +27,10 @@ $ npm install generate-nginx-config-for-thingies
 
 Usage
 -----
-Just call the script and prive an first argument being the path to the machine-config.js file.
-The second argument would be the directory where we should store the generated files.
+Call the script by it's name :-) first argument is the path to the machine-config.js file.
+The second argument is the directory where we should store the generated files.
 
+Both arguments are required.
 ```
 $ generate-nginx-config-for-thingies --help
 
