@@ -96,6 +96,9 @@
     }
     result = "";
     result += "    location / {\n";
+    if (!thingy.searchIndexing) {
+      result += '        add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";\n';
+    }
     result += "        root /srv/http/" + thingy.homeUser + ";\n";
     result += "        index index.html;\n";
     result += "    }\n\n";
@@ -110,6 +113,9 @@
     }
     result = "";
     result += "    location / {\n";
+    if (!thingy.searchIndexing) {
+      result += '        add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";\n';
+    }
     result += "        proxy_pass http://localhost:" + thingy.port + ";\n";
     result += "    }\n\n";
     return result;
@@ -123,6 +129,9 @@
     }
     result = "";
     result += "    location / {\n";
+    if (!thingy.searchIndexing) {
+      result += '        add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";\n';
+    }
     result += "        proxy_pass http://unix:/run/" + thingy.homeUser + ".sk;\n";
     result += "    }\n\n";
     return result;

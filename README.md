@@ -62,6 +62,7 @@ To be interpreted correctly the machine-config file must meet following requirem
 - each thingy may have:
     - `homeUser` - required - used for naming
     - `type` - processed are "service" or "website"
+    - `searchIndexing` - optional - if undefined or false will add x-robots-tag to not index
     - `dnsNames` - optional - sometimes very reasonable^^
     - `socket` - optional - use proxy_pass to unix-socket
     - `outsidePort` - nginx listens on this port then default is port 80
@@ -80,6 +81,7 @@ module.exports = {
         {
             homeUser: "weblenny-homepage",
             type:"website",
+            searchIndexing: true,
             dnsNames: ["www.weblenny.at", "weblenny.at"]
         },
         {
@@ -106,6 +108,7 @@ server {
     server_name citysearch.weblenny.at;
 
     location / {
+        add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
         proxy_pass http://unix:/run/citysearch-socket.sk;
     }
 
@@ -137,6 +140,7 @@ server {
     server_name citysearch.weblenny.at;
 
     location / {
+        add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
         proxy_pass http://localhost:3002;
     }
 
