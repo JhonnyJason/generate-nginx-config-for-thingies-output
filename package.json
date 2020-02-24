@@ -1,6 +1,6 @@
 {
   "name": "generate-nginx-config-for-thingies",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Small cli which generates the appropriate nginx configuration files which will then later reside in /etc/nginx/sites-enabled directory.",
   "main": "index.js",
   "bin": {
@@ -30,6 +30,6 @@
   "dependencies": {
     "chalk": "^3.0.0",
     "fs-extra": "^8.1.0",
-    "meow": "^6.0.0"
+    "meow": "^6.0.1"
   }
 }

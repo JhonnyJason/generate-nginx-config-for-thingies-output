@@ -65,6 +65,8 @@ To be interpreted correctly the machine-config file must meet following requirem
     - `searchIndexing` - optional - if undefined or false will add x-robots-tag to not index
     - `dnsNames` - optional - sometimes very reasonable^^
     - `socket` - optional - use proxy_pass to unix-socket
+    - `broadCORS` - optional - add headers for wide open CORS with credentials allowed
+    - `upgradeWebsocket` - optional adds upgrade headers to use Websockets
     - `outsidePort` - nginx listens on this port then default is port 80
     - `port` - optional(required if we donot use a unix-socket) - proxy_pass to localhost:port
 
@@ -88,6 +90,8 @@ module.exports = {
             homeUser: "citysearch",
             type:"service",
             port: "3002",
+            broadCORS: true,
+            upgradeWebsocket: true,
             dnsNames: ["citysearch.weblenny.at"]
         },
         ...
@@ -108,8 +112,13 @@ server {
     server_name citysearch.weblenny.at;
 
     location / {
+
+########## Tell the Robots: No Indexing!
         add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+
+########## ProxyPass to service at unix Socket
         proxy_pass http://unix:/run/citysearch-socket.sk;
+
     }
 
 }
@@ -123,9 +132,9 @@ server {
 
     server_name www.weblenny.at weblenny.at;
 
-    location / {
         root /srv/http/weblenny-homepage;
         index index.html;
+
     }
 
 }
@@ -140,8 +149,35 @@ server {
     server_name citysearch.weblenny.at;
 
     location / {
+
+########## Tell the Robots: No Indexing!
         add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+
+########## Allow all CORS requests
+        add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+        add_header 'Access-Control-Allow-Credentials' 'true' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header Access-Control-Allow-Headers 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Requested-With,X-Token-Auth,X-Mx-ReqToken,X-Requested-With';
+        add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+
+        if ($request_method = 'OPTIONS') {
+
+            add_header 'Access-Control-Max-Age' 1728000;
+            add_header 'Content-Type' 'text/plain; charset=utf-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+
+########## Upgrade connection for websockets
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_http_version 1.1;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $host;
+
+########## ProxyPass to service at port
         proxy_pass http://localhost:3002;
+
     }
 
 }

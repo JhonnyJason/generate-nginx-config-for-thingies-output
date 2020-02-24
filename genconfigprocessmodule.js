@@ -6,33 +6,29 @@
     name: "genconfigprocessmodule"
   };
 
-  //region node_modules
-  fs = require("fs");
-
-  //endregion
-
-  //log Switch
+  //###########################################################
   log = function(arg) {
     if (allModules.debugmodule.modulesToDebug["genconfigprocessmodule"] != null) {
       console.log("[genconfigprocessmodule]: " + arg);
     }
   };
 
-  //region internal variables
+  //###########################################################
+  fs = require("fs");
+
+  //###########################################################
   pathHandler = null;
 
   nginxConf = null;
 
-  //endregion
-
-  //#initialization function  -> is automatically being called!  ONLY RELY ON DOM AND VARIABLES!! NO PLUGINS NO OHTER INITIALIZATIONS!!
+  //###########################################################
   genconfigprocessmodule.initialize = function() {
     log("genconfigprocessmodule.initialize");
     pathHandler = allModules.pathhandlermodule;
     return nginxConf = allModules.nginxconfigmodule;
   };
 
-  //region internal functions
+  //###########################################################
   processAllThingies = async function() {
     var config, promises, requirePath, thingy;
     log("processAllThingies");
@@ -52,9 +48,7 @@
   };
 
   
-  //endregion
-
-  //region exposed functions
+  //###########################################################
   genconfigprocessmodule.execute = async function(configPath, outputDirectory) {
     log("genconfigprocessmodule.execute");
     await pathHandler.setConfigFilePath(configPath);
@@ -63,7 +57,6 @@
     return true;
   };
 
-  //endregion
   module.exports = genconfigprocessmodule;
 
 }).call(this);
