@@ -107,14 +107,17 @@ Produced Config Files:
 - File: citysearch-socket
 ```
 server {
-    listen 65531;
+    listen 65530;
+    listen [::]:65530;
 
     server_name citysearch.weblenny.at;
 
-    location / {
+###### Tell the Robots: No Indexing!
+    add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
 
-########## Tell the Robots: No Indexing!
-        add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+###### Handling of all regular requests - SocketService
+    location / {
+        limit_except POST { deny all; }
 
 ########## ProxyPass to service at unix Socket
         proxy_pass http://unix:/run/citysearch-socket.sk;
@@ -132,9 +135,17 @@ server {
 
     server_name www.weblenny.at weblenny.at;
 
-        root /srv/http/weblenny-homepage;
-        index index.html;
+###### Our document-root
+    root /srv/http/weblenny-homepage;
 
+###### Removing .html extension
+    if ($request_uri ~ ^/(.*)\.html$) { return 301 /$1; }
+
+###### Handling of all regular requests - Website
+    location / {
+        limit_except GET { deny all; }
+        gzip_static on;
+        try_files $uri $uri.html $uri/ =404;
     }
 
 }
@@ -148,25 +159,35 @@ server {
 
     server_name citysearch.weblenny.at;
 
-    location / {
+###### Tell the Robots: No Indexing!
+    add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
 
-########## Tell the Robots: No Indexing!
-        add_header  X-Robots-Tag "noindex, nofollow, nosnippet, noarchive";
+###### Allow all CORS requests
+    add_header 'Access-Control-Allow-Origin' "$http_origin" always;
+    add_header 'Access-Control-Allow-Credentials' 'true' always;
+    add_header 'Access-Control-Allow-Methods' 'POST, OPTIONS';
+    add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Requested-With,X-Token-Auth,X-Mx-ReqToken,X-Requested-With';
+    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
 
-########## Allow all CORS requests
+    if ($request_method = 'OPTIONS') { rewrite ^ /.options last; }
+
+###### handle options requests here
+    location /.options {
+        limit_except OPTIONS { deny all; }
         add_header 'Access-Control-Allow-Origin' "$http_origin" always;
         add_header 'Access-Control-Allow-Credentials' 'true' always;
-        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
-        add_header Access-Control-Allow-Headers 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Requested-With,X-Token-Auth,X-Mx-ReqToken,X-Requested-With';
+        add_header 'Access-Control-Allow-Methods' 'POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Requested-With,X-Token-Auth,X-Mx-ReqToken,X-Requested-With';
         add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range';
+        add_header 'Access-Control-Max-Age' 1728000;
+        add_header 'Content-Type' 'text/plain; charset=utf-8';
+        add_header 'Content-Length' 0;
+        return 204;
+    }
 
-        if ($request_method = 'OPTIONS') {
-
-            add_header 'Access-Control-Max-Age' 1728000;
-            add_header 'Content-Type' 'text/plain; charset=utf-8';
-            add_header 'Content-Length' 0;
-            return 204;
-        }
+###### Handling of all regular requests - PortService
+    location / {
+        limit_except POST { deny all; }
 
 ########## Upgrade connection for websockets
         proxy_set_header Upgrade $http_upgrade;
@@ -174,6 +195,8 @@ server {
         proxy_http_version 1.1;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header Host $host;
+        proxy_read_timeout 2h;
+        proxy_send_timeout 2h;
 
 ########## ProxyPass to service at port
         proxy_pass http://localhost:3002;

@@ -1,6 +1,6 @@
 {
     "name": "generate-nginx-config-for-thingies",
-    "version": "0.1.8",
+    "version": "0.1.9",
     "description": "Small cli which generates the appropriate nginx configuration files which will then later reside in /etc/nginx/sites-enabled directory.",
     "main": "index.js",
     "bin": {
